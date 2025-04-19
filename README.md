@@ -1,98 +1,108 @@
-Installation Guide: Database Backup Service
-How to Install the Database Backup Service
-Introduction
-The Database Backup Service periodically takes backups of a SQL Server database and stores them in the specified folder. In this guide, you will learn how to install this service on a Windows machine.
+# Database Backup Service - Installation Guide
 
-Prerequisites
-.NET Framework must be installed on your machine.
+## Introduction
+The **Database Backup Service** automatically performs periodic backups of a SQL Server database and stores them in a specified folder. This guide will walk you through the installation process.
 
-A SQL Server database must be running properly.
+---
 
-You must have administrator privileges to install and run the service.
+## Prerequisites
+- **.NET Framework** should be installed on your machine.
+- A **SQL Server database** must be running and accessible.
+- You must have **administrator privileges** to install and run the service.
 
-Installation Steps
-Build the Project:
+---
 
-Make sure you've built the project in Release mode in Visual Studio.
+## Installation Steps
 
-After building, make sure all necessary files (such as the BackupService.exe and installation files) are located in the project folder.
+### 1. **Build the Project**
+   - Ensure you have built the project in **Release** mode in Visual Studio.
+   - After building, verify that all necessary files (e.g., `BackupService.exe`) are present in your project output directory.
 
-Open Command Prompt as Administrator:
+### 2. **Open Command Prompt as Administrator**
+   - Press `Windows + X`, then select **Command Prompt (Admin)** or **Windows PowerShell (Admin)**.
 
-Open Command Prompt with Administrator privileges. You can do this by searching for "cmd" in the Start menu, then right-clicking and selecting Run as Administrator.
+### 3. **Navigate to the Service Folder**
+   - Use the `cd` command to navigate to the folder containing your `BackupService.exe` file. Example:
+     ```bash
+     cd C:\path\to\your\BackupService
+     ```
 
-Navigate to the Service Folder:
+### 4. **Install the Service Using `InstallUtil`**
+   - Use the `InstallUtil.exe` tool to install the service:
+     ```bash
+     C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe BackupService.exe
+     ```
+   - **Note**: If you're on a 64-bit Windows system, use the 64-bit version of `InstallUtil.exe`:
+     ```bash
+     C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe BackupService.exe
+     ```
 
-Use the cd command to navigate to the folder containing your BackupService.exe file:
+### 5. **Verify Service Installation**
+   - Open **Services**:
+     - Press `Windows + R`, type `services.msc`, and hit Enter.
+     - Look for the service named **Database Backup Service** in the list.
 
-bash
-نسخ
-تحرير
-cd C:\path\to\your\BackupService
-Install the Service using InstallUtil:
+---
 
-Use the InstallUtil.exe tool from the .NET Framework to install the service. Type the following command in Command Prompt:
+## Starting and Stopping the Service
 
-bash
-نسخ
-تحرير
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe BackupService.exe
-Note: Make sure to adjust the path to InstallUtil.exe based on your .NET version, and if you're on a 64-bit Windows system, use the 64-bit version:
+### Start the Service:
+   - To start the service from the command prompt, type:
+     ```bash
+     net start DatabaseBackupService
+     ```
 
-bash
-نسخ
-تحرير
-C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe BackupService.exe
-Verify Service Installation:
+### Stop the Service:
+   - To stop the service, type:
+     ```bash
+     net stop DatabaseBackupService
+     ```
 
-After the command has completed successfully, you can verify that the service has been installed by opening Services:
+---
 
-Press Windows + R, type services.msc, and press Enter.
+## Uninstalling the Service
 
-Look for Database Backup Service in the list of services.
+### 1. **Open Command Prompt as Administrator**
+   - Open **Command Prompt (Admin)** or **Windows PowerShell (Admin)**.
 
-Starting the Service
-Start the Service:
+### 2. **Navigate to the Service Folder**
+   - Use the `cd` command to navigate to the folder where `BackupService.exe` is located.
 
-You can start the service from the Services management console or use the following command in Command Prompt:
+### 3. **Uninstall the Service**
+   - Run the following command to uninstall the service:
+     ```bash
+     C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /u BackupService.exe
+     ```
+   - If you're on a 64-bit system, use:
+     ```bash
+     C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe /u BackupService.exe
+     ```
 
-bash
-نسخ
-تحرير
-net start DatabaseBackupService
-Stop the Service:
+---
 
-To stop the service, use the following command:
+## Configuration
+Before running the service, make sure that the **connection string** and **backup folder paths** are properly configured in the `App.config` file:
+- **SqlConnectionString**: The connection string for your SQL Server.
+- **BackupFolderPath**: The folder where the backups will be stored.
+- **LogFolderPath**: The folder where logs will be written.
 
-bash
-نسخ
-تحرير
-net stop DatabaseBackupService
-Uninstall the Service
-If you need to uninstall the service, you can use InstallUtil with the /u flag as follows:
+If the backup folder does not exist, it will be created automatically by the service.
 
-Open Command Prompt as Administrator.
+---
 
-Navigate to the folder containing BackupService.exe.
+## Important Notes
 
-Type the following command to uninstall the service:
+- Ensure that your **SQL Server** instance is accessible by the service.
+- The service can be run in **Interactive Mode** during development using `StartDebug()`, but it should be run as a regular service in production environments.
+- The service logs errors and information to both the **log file** and the **event log**.
 
-bash
-نسخ
-تحرير
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /u BackupService.exe
-Or if you're using a 64-bit system:
+---
 
-bash
-نسخ
-تحرير
-C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe /u BackupService.exe
-Important Notes
-Ensure that the database connection is correctly set in the App.config file with the correct connection string.
+## Conclusion
+Once the service is installed, it will start automatically according to the schedule defined in the `App.config` file. The service will periodically back up the SQL Server database and store the backups in the specified location.
 
-Make sure the backup folders are configured correctly. If they don't exist, they will be created automatically during the backup process.
+---
 
-If you're in a development environment, you can test the service in Interactive Mode using StartDebug(), but in production, it should run as a regular Windows service.
-
-Conclusion
-The service is now installed! It will perform periodic backups based on the settings in the App.config file. If you encounter any issues, you can refer to the service logs for potential errors.
+## Troubleshooting
+- **Service not starting**: Check the Event Viewer for any startup errors.
+- **Backups not happening**: Ensure that the SQL Server database is accessible and the backup folder has proper permissions.
