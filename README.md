@@ -94,7 +94,7 @@ If the backup folder does not exist, it will be created automatically by the ser
 
 - Ensure that your **SQL Server** instance is accessible by the service.
 - The service can be run in **Interactive Mode** during development using `StartDebug()`, but it should be run as a regular service in production environments.
-- The service logs errors and information to both the **log file** and the **event log**.
+- The service logs errors and information to a **log file** located in the configured `LogFolderPath`. Make sure the log folder exists and the service has permission to write to it.
 
 ---
 
@@ -104,5 +104,5 @@ Once the service is installed, it will start automatically according to the sche
 ---
 
 ## Troubleshooting
-- **Service not starting**: Check the Event Viewer for any startup errors.
+- **Service not starting**: Check the service log file for any startup errors.
 - **Backups not happening**: Ensure that the SQL Server database is accessible and the backup folder has proper permissions.
